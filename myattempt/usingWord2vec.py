@@ -69,10 +69,8 @@ from gensim.models import Word2Vec
 
   
 # Replaces escape character with space 
-f = raw.replace("\n", " ") 
-  
-data = [] 
-  
+f = raw.replace("\n", " ")   
+data = []  
 # iterate through each sentence in the file 
 for i in sent_tokenize(f): 
     temp = []   
@@ -91,8 +89,6 @@ model1 = gensim.models.Word2Vec(data, min_count = 1,
 #print(model1.wv['turing'])
 
  
-
-
 frequency={}
 for i in tokens:
     if i not in frequency:
@@ -108,7 +104,8 @@ x=[]
 # for i in vocab:
 # 	print(i)
 
-Word2VecDic={}
+
+Word2VecDic={}		#word2vecDic will contain word vector of each word in vocublury
 for i in vocab:
 	Word2VecDic[i]=model1.wv[i]
 	#print(i,model1.wv[i])
@@ -120,12 +117,6 @@ for i in vocab:
 # 		sent.append(Word2VecDic['secret'][i]+Word2VecDic['limited'][i])
 # print(sent)
 
-# i=0
-# for k,v in Word2VecDic.items():
-# 	i=i+1
-# 	print(k,v)
-# 	if i>10:
-# 		break
 
  #finding sentence vector
 df=pd.read_csv(filePath,header=None,skiprows=0,delimiter=",")
@@ -150,12 +141,11 @@ for sent in x:
 		a.append(0.0)
 	for word in word_tokenize(sent):
 		if word in vocab:
-				#word is in word2vec hence there is vector of size 5 for that word
+				#word is in word2vecDic hence there is vector of size 5 for that word
 				l=l+1
 				for i in range(0,k):
 					a[i]=a[i]+Word2VecDic[word][i]
-	#b=np.array(a)
-	#b.mean(axis=0)
+
 	for i in range(0,k):
 					a[i]=(a[i])*1.0/l
 	ques.append(a)
@@ -164,13 +154,6 @@ for sent in x:
 #now every question is represented by vector of size 5
 
 
-# j=0
-# for i in ques:
-# 	print(i)
-# 	j=j+1
-# 	if j>5:
-# 		break
-
 
 
 
@@ -178,7 +161,7 @@ for sent in x:
 X_train, X_test, y_train, y_test = train_test_split(ques, y, test_size=0.33, random_state=42)
 
 
-# #print(len(X_train))
+#trying with TFIDF
 
 # #txt_clf=Pipeline([('vect',CountVectorizer(stop_words='english',ngram_range=(1,2))),('tfidf',TfidfTransformer()),('clf',MultinomialNB(alpha=0.1))])
 
@@ -190,18 +173,17 @@ X_train, X_test, y_train, y_test = train_test_split(ques, y, test_size=0.33, ran
 # clf = svm.SVC()
 # clf.fit(X_train, y_train)
 
+#trying with MLP classifier
+
 # from sklearn.neural_network import MLPClassifier
 
 # clf = MLPClassifier(solver='lbfgs', alpha=1e-5,hidden_layer_sizes=(100, ), random_state=1)
 # clf.fit(X_train, y_train)                         
 # predict=clf.predict(X_test)
 
-# j=0
-# for i in X_train:
-# 	print(y[j],predict[j])
-# 	j=j+1
-# 	if j>k:
-# 		break
+
+#trying with logistic regression
+
 from sklearn.linear_model import LogisticRegression
 clf = LogisticRegression(n_jobs=1, C=1e5)
 clf.fit(X_train, y_train)
